@@ -19,6 +19,7 @@ function setup() {
 }
 
 function draw() {
+  
   if (state === "start screen") {
     background("black");
     showInstructions(); 
@@ -40,7 +41,7 @@ function showInstructions() {
 
 function mousePressed() {
   if (state === "start screen") {
-    state === "bouncing ball";
+    state = "bouncing ball";
   }
 }
 
@@ -54,7 +55,6 @@ function keyTyped() {
   }
 }
      
-
 function drawCircle() {
   //display circle
   fill(r, g, b);
