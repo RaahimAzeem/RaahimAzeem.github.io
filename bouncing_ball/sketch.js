@@ -12,22 +12,22 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   x = width / 2;
   y = height / 2;
-  dx = random(-5, 5);     
+  dx = random(-5, 5);
   dy = random(-5, 5);
   changeCircleColour();
   noStroke();
 }
 
 function draw() {
-  
+
   if (state === "start screen") {
     background("black");
-    showInstructions(); 
+    showInstructions();
   }
   else if (state === "bouncing ball") {
     background(220);
     drawCircle();
-    moveCircle(); 
+    moveCircle();
     bounceOffWall();
   }
 }
@@ -35,8 +35,8 @@ function draw() {
 function showInstructions() {
   fill("white");
   textSize(42);
-  textAlign(CENTER,CENTER);
-  text("Click the mouse to start!", width/2, height/2)
+  textAlign(CENTER, CENTER);
+  text("Click the mouse to start!", width / 2, height / 2)
 }
 
 function mousePressed() {
@@ -54,7 +54,7 @@ function keyTyped() {
     changeCircleColour();
   }
 }
-     
+
 function drawCircle() {
   //display circle
   fill(r, g, b);
@@ -72,10 +72,13 @@ function bounceOffWall() {
   if (x >= width - radius || x <= 0 + radius) {
     dx = -1 * dx;
     changeCircleColour();
+    console.log("Bounced");
   }
   if (y >= height - radius || y <= 0 + radius) {
     dy = -1 * dy;
     changeCircleColour();
+    console.log("Bounced");
+
   }
 }
 function changeCircleColour() {
