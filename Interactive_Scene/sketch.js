@@ -9,8 +9,15 @@ let state = "start screen";
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  rectMode(CENTER);
+  
 }
 
 function draw() {
-  background(220);
+  background(0);
+  stroke("green"); 
+  noFill();
+  strokeWeight(3);
+  rect(width/2,height/2,width/2,height/2);
+  
 }
