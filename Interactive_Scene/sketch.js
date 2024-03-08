@@ -6,6 +6,9 @@
 
 let state = "start screen";
 
+function preload() {
+  backgroundimage = loadImage("background image.jpg")
+}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -14,10 +17,12 @@ function setup() {
 }
 
 function draw() {
-  background(0);
+  image(backgroundimage,width/2,height/2,450, 650);
+
   stroke("green"); 
   noFill();
   strokeWeight(3);
   rect(width/2,height/2,width/2,height/2);
+
   
 }

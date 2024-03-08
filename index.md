@@ -6,5 +6,5 @@
 - [Collision Demo](collision) 
 
 ## Projects 
-- [Interactive Scene](Interactive_Scene)
+- [Interactive Scene](interactive_scene)
 
