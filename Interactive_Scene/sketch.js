@@ -17,12 +17,14 @@ function setup() {
 }
 
 function draw() {
-  image(backgroundimage,width/2,height/2,450, 650);
+  background(backgroundimage);
 
   stroke("green"); 
   noFill();
   strokeWeight(3);
   rect(width/2,height/2,width/2,height/2);
+  noStroke();
+
 
   
 }
