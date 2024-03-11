@@ -19,11 +19,13 @@ function setup() {
 function draw() {
   background(backgroundimage);
 
-  stroke("green"); 
+  stroke("white"); 
   noFill();
   strokeWeight(3);
   rect(width/2,height/2,width/2,height/2);
   noStroke();
+  fill("white");
+  rect(300,25,width/2,50);
 
 
   
