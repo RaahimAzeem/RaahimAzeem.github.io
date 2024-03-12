@@ -4,6 +4,7 @@
 - [Traffic Light](Traffic Light)
 - [Bouncing Ball](bouncing_ball)
 - [Collision Demo](collision) 
+- [Arrays and Objects](circles)
 
 ## Projects 
 - [Interactive Scene](interactive_scene)
