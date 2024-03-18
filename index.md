@@ -6,6 +6,7 @@
 - [Collision Demo](collision) 
 - [Arrays and Objects](circles)
 - [Generative Art](art)
+- [Terrain Generation](terrain)
 
 ## Projects 
 - [Interactive Scene](interactive_scene)
