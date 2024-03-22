@@ -7,6 +7,7 @@
 - [Arrays and Objects](circles)
 - [Generative Art](art)
 - [Terrain Generation](terrain)
+- [Translate/Rotate](translate)
 
 ## Projects 
 - [Interactive Scene](interactive_scene)
