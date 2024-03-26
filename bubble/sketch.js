@@ -1,4 +1,4 @@
-// Bubble Movement Demo
+// Bubble Movement and Slcining from an Array Demo
 // Object Notation and Arrays Demo
 // March 25, 2024
 
@@ -22,6 +22,22 @@ function draw() {
   // moveBubblesRandomly();
   moveBubblesWithNoise();
   displayBubbles();
+}
+
+function mousePressed() {
+  // did you click on a bubble?
+  for (let i = theBubbles.length - 1; i >= 0; i-- ) {
+    if (clickedInBubble(mouseX,mouseY,theBubbles[i])) {
+      // kill it 
+      theBubbles.splice(i,1);
+    }
+  }
+}
+
+function clickedInBubble(x,y,someBubble) {
+  let distanceAway = dist(x,y,someBubble.x,someBubble.y);
+  let radius = someBubble.size / 2;
+  return distanceAway < radius;
 }
 
 function moveBubblesWithNoise() {
@@ -80,7 +96,7 @@ function displayBubbles() {
 
 function spawnBubble() {
   let someBubble = {
-    size: random(10,30),
+    size: random(50,80),
     x: random(width),
     y: random(height),
     r: random(255),
@@ -90,7 +106,7 @@ function spawnBubble() {
     alpha: random(255),
     timeX: random(1000000),
     timeY: random(1000000),
-    deltaTime: 0.01,
-  }
+    deltaTime: 0.001,
+  };
   theBubbles.push(someBubble);
 }
