@@ -23,9 +23,11 @@ function draw() {
 function drawCorrectLight() {
   if (state === "green") {
     drawGreenLight();
-  } else if (state === "yellow") {
+  }
+  else if (state === "yellow") {
     drawYellowLight();
-  } else if (state === "red") {
+  }
+  else if (state === "red") {
     drawRedLight();
   }
 }

@@ -36,7 +36,7 @@ function showInstructions() {
   fill("white");
   textSize(42);
   textAlign(CENTER, CENTER);
-  text("Click the mouse to start!", width / 2, height / 2)
+  text("Click the mouse to start!", width / 2, height / 2);
 }
 
 function mousePressed() {
