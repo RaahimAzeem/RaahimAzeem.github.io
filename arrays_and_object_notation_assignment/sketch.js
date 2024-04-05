@@ -5,39 +5,58 @@
 // Extra for Experts:
 // - 
 
-let state = "Start Screen";
-let aliens = []; 
+let state = "start screen";
+let aliens = [];  
+let spaceship;
+let sizeW = 55; 
+let sizeH = 55;
+let shipX;
+let shipY;
+let dx = 10;
+let dy = 10;
+
+
+function preload() {
+  spaceship = loadImage("spaceship.png");
+}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  
+  shipX = width / 2;
+  shipY = height - 80;
 }
 
 function draw() {
-  background(0);
+  determineState();
 }
 
 function determineState() {
-  if (state === "Start Screen") {
+  if (state === "start screen") {
     background(0);
     displayTextOnStartup();
   }
-  else if (state === "Game Screen") {
-    background(255);
+  else if (state === "game screen") {
+    background(55);
+
+    // Spawning circle shaped asteroids in the background to make it feel like space
+    fill(255);
+    noStroke();
+    circle(random(width),random(height),10);
+
+    // Spaceship which will shoot down the aliens
+    image(spaceship,shipX,shipY,sizeW,sizeH);
+
+    moveShip();
+
   }
 }
-
-function displayTextOnStartup() {
-  // Displaying text in white color which instructs how to start the game
-  fill(255);
-  textSize(30);
-  text("Press spacebar to start the game",width/2,height/2);
-  text("The Alien Invasion Game", width/2, 50);
-
-  // Displaying my name 
-  fill(255);
-  textSize(20);
-  text("Made by Muhammad Raahim",width-300,height-50);
+function moveShip() {
+  if (keyIsDown(39)) {// Right Arrow Key
+    shipX +=  dx;
+  }
+  if (keyIsDown(37)) {// Left Arrow key
+    shipX -=   dx;
+  }
 }
 
 function spawnAliens() {
@@ -48,4 +67,22 @@ function spawnAliens() {
   };
 }
 
+function mousePressed() {
+  if (state === "start screen") {
+    state = "game screen";
+  }
+}
 
+function displayTextOnStartup() {
+  // Displaying text in white color which instructs how to start the game
+  fill(255);
+  textSize(42);
+  textAlign(CENTER, CENTER);
+  text("Click the mouse to start the game",width / 2,height / 2);
+  
+
+  // Displaying my name 
+  fill(255);
+  textSize(20);
+  text("Made by Muhammad Raahim",width-300,height-50);
+}
