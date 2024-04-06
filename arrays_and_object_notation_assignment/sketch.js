@@ -8,8 +8,9 @@
 let state = "start screen";
 let aliens = [];  
 let spaceship;
-let sizeW = 55; 
-let sizeH = 55;
+let asteroid;
+let sizeW = 75; 
+let sizeH = 75;
 let shipX;
 let shipY;
 let dx = 10;
@@ -18,12 +19,13 @@ let dy = 10;
 
 function preload() {
   spaceship = loadImage("spaceship.png");
+  asteroid = loadImage("asteroid.png");
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   shipX = width / 2;
-  shipY = height - 80;
+  shipY = height - 100;
 }
 
 function draw() {
@@ -38,13 +40,13 @@ function determineState() {
   else if (state === "game screen") {
     background(55);
 
-    // Spawning circle shaped asteroids in the background to make it feel like space
-    fill(255);
-    noStroke();
-    circle(random(width),random(height),10);
+    // Spawning asteroids in the background to make it feel like space
+    image(asteroid,random(width),random(height),20,20);
 
     // Spaceship which will shoot down the aliens
     image(spaceship,shipX,shipY,sizeW,sizeH);
+    image(spaceship,shipX,shipY,sizeW,sizeH);
+
 
     moveShip();
 
