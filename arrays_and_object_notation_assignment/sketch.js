@@ -79,17 +79,11 @@ function hitAlien() {
     for (let theAlien of alienArray) {
       hit = collideRectRect(theBullet.bX,theBullet.bY,theBullet.bWidth,theBullet.bHeight,theAlien.alienX,theAlien.alienY,theAlien.alienW,theAlien.alienH);
       
-      for (let i = bulletArray.length-1; i >= 0; i--) {
-        if (hit) {
-          bulletArray.splice(i,1);
-          score += 100;
-        }
-      }
-
-      for (let i = alienArray.length-1; i >= 0; i--) {
-        if (hit) {
-          alienArray.splice(i,1);
-        }
+      if (hit) {
+        theAlien = alienToRemove;
+        bulletArray.splice(bulletArray.indexOf(theBullet),1);
+        alienArray.splice(alienArray.indexOf(theAlien),1);
+        score += 100;
       }
 
     }
@@ -97,7 +91,18 @@ function hitAlien() {
   }
 
 }
+// for (let i = bulletArray.length-1; i >= 0; i--) {
+//   if (hit) {
+//     bulletArray.splice(i,1);
+//     score += 100;
+//   }
+// }
 
+// for (let i = alienArray.length-1; i >= 0; i--) {
+//   if (hit) {
+//     alienArray.splice(i,1);
+//   }
+// }
 
 function keyPressed() {
   if (key === " ") {
