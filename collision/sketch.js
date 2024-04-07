@@ -1,9 +1,11 @@
 // Collide 2D Demo
 
+let hit = false;
+
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
 }
-let hit = false;
 
 function draw() {
   background(255);
@@ -27,5 +29,5 @@ function draw() {
   // hit = collideRectCircleVector(rect_start, rect_size, mouse, radius);
 
   
-  console.log('colliding?', hit);
+  console.log("colliding?", hit);
 }

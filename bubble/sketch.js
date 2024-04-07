@@ -8,6 +8,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   noStroke();
 
+  // Spawn 5 bubbles at the start
   for (let i = 0; i < 5; i++) {
     spawnBubble();
   }
