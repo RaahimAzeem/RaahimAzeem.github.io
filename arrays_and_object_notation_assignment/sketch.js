@@ -3,7 +3,8 @@
 // April 8, 2024
 //
 // Extra for Experts:
-// - 
+// - Used Sounds
+// - Added HTML Elements
 
 // Game setup variables
 let state = "start screen";
@@ -14,6 +15,9 @@ let asteroid;
 let aliens;
 let gameLost;
 let gameWon;
+let bulletSound;
+let alienDestroyedSound;
+let lifeLostSound;
 let gameWonTextDisplay;
 let shipX;
 let shipY;
@@ -26,12 +30,15 @@ let lives = 3;
 
 
 function preload() {
-  // Preloading images 
+  // Preloading images and sounds
   spaceship = loadImage("spaceship.png");
   asteroid = loadImage("asteroid.png");
   aliens = loadImage("alien.png");
   gameLost = loadImage("gameLost.jpg");
   gameWon = loadImage("gameWon.png");
+  bulletSound = loadSound("Bullet Sound.mp3");
+  alienDestroyedSound = loadSound("Alien Destroyed Sound.mp3");
+  lifeLostSound = loadSound("Lives Lost.mp3");
 }
 
 function setup() {
@@ -48,7 +55,6 @@ function draw() {
 }
 
 function determineState() {
-
   // Changing the state accordingly
   if (state === "start screen") {
     startScreen();
@@ -96,10 +102,11 @@ function gameScreen() {
 }
 
 function hitAlien() {
-  // Looping through 2 arrays and making the aliens and bullets disappear as soon as they collide, then increase the score as well
+  // Looping through 2 arrays and making the aliens and bullets disappear as soon as they collide, increase the score and let a sound play as well
   for (let theAlien of alienArray) {
     for (let theBullet of bulletArray) {
       if (collideRectRect(theBullet.bX, theBullet.bY, theBullet.bWidth, theBullet.bHeight,theAlien.alienX, theAlien.alienY, theAlien.alienW, theAlien.alienH)) {
+        alienDestroyedSound.play();
         alienArray.splice(alienArray.indexOf(theAlien),1);
         bulletArray.splice(bulletArray.indexOf(theBullet),1);
         score += 100;
@@ -112,14 +119,20 @@ function hitAlien() {
 
 
 function gameResult() {
-  // If the lives equal 0, it will end the game and display an image
+  // If the lives equal 0, it will end the game and display an image. Stops all the other sounds 
   if (lives <= 0) {
+    bulletSound.stop();
+    alienDestroyedSound.stop();
+    lifeLostSound.stop();
     background(55);
     image(gameLost,width/5,0,1024,height);
   }
 
-  // If the score equals = 1000, you win the game and display an image and text accordingly 
+  // If the score equals = 1000, you win the game and display an image and text accordingly. Stops all the other sounds 
   if (score >= 2000) {
+    bulletSound.stop();
+    alienDestroyedSound.stop();
+    lifeLostSound.stop();
     background(55);
     image(gameWon,width/3,0,612,365);
     // gameWonText();
@@ -128,15 +141,18 @@ function gameResult() {
 
 
 function keyPressed() {
-  // For every time spacebar is pressed, bullets are spawned at the x location of the ship
+  // For every time spacebar is pressed, bullets are spawned at the x location of the ship. Letting a sound play as well and adjusting the volume
   if (key === " ") {
+    bulletSound.setVolume(0.2);
+    bulletSound.play();
     spawnBullets(shipX);
   }
 }
 
 function startScreen() {
-  // The background is light blue and displays the instructions on the screen
-  background(0,27,55);
+  // The background is light blue and displays the instructions on the screen. Stopping the bullet sound in case user clicks spacebar on the start screen
+  bulletSound.stop();
+  background(0,27,45);
   displayTextOnStartup();
 } 
 
@@ -213,8 +229,9 @@ function moveAliens() {
   for (let theAlien of alienArray) {
     theAlien.alienY += theAlien.alienDY;
     
-    // If theAlien goes past the y value of the ship, the number of lives decrease by 1 and the alien is disappeared/removed from the array 
+    // If theAlien goes past the y value of the ship, the number of lives decrease by 1 and the alien is disappeared/removed from the array. A sound is also played
     if (theAlien.alienY > shipY) {
+      lifeLostSound.play();
       lives -= 1;
       alienArray.splice(alienArray.indexOf(theAlien),1);
     }
@@ -246,47 +263,5 @@ function displayTextOnStartup() {
   textSize(30);
   text("Use the Arrow Keys or the keys 'a' and 'd' to move the ship.",width/2,height*3/4);
   text("Press the spacebar to fire bullets",width/2,height*3.3/4);
-  text("Press the key 'e' to play the easy mode, Press the key 'm' to play the medium mode, Press the key 'h' to play the hard mode",width/2,height*3.6/4);
-
 }
  
-// for (let i = bulletArray.length-1; i >= 0; i--) {
-//   if (hit) {
-//     bulletArray.splice(i,1);
-//     score += 100;
-//   }
-// }
-
-// for (let i = alienArray.length-1; i >= 0; i--) {
-//   if (hit) {
-//     alienArray.splice(i,1);
-//   }
-// }
-
-// Another way for alienHit() {
-// // Array to hold indices of bullets to be removed
-// let bulletsToRemove = [];
- 
-// // First pass: identify bullets that hit an alien
-// for (let i = bulletArray.length - 1; i >= 0; i--) {
-//   let theBullet = bulletArray[i];
-//   for (let a = alienArray.length - 1; a >= 0; a--) {
-//     let theAlien = alienArray[a];
-//     if (collideRectRect(theBullet.bX, theBullet.bY, theBullet.bWidth, theBullet.bHeight,theAlien.alienX, theAlien.alienY, theAlien.alienW, theAlien.alienH)) {
-        
-//       // Mark the bullet for removal
-//       bulletsToRemove.push(i);
-        
-//       // Remove the alien
-//       alienArray.splice(a, 1);
-
-//       score += 100; // Increment the score
-//       break; // Exit the inner loop as the bullet has hit an alien
-//     }
-//   }
-// }
- 
-// // Second pass: remove marked bullets
-// for (let i = bulletsToRemove.length - 1; i >= 0; i--) {
-//   bulletArray.splice(bulletsToRemove[i], 1);
-// }
