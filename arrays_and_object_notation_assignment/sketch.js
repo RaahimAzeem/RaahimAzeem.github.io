@@ -4,7 +4,6 @@
 //
 // Extra for Experts:
 // - Used Sounds
-// - Added HTML Elements
 
 // Game setup variables
 let state = "start screen";
@@ -18,7 +17,6 @@ let gameWon;
 let bulletSound;
 let alienDestroyedSound;
 let lifeLostSound;
-let gameWonTextDisplay;
 let shipX;
 let shipY;
 let shipDX = 10;
@@ -82,7 +80,7 @@ function gameScreen() {
 
   moveShip();
 
-  // If the ship has been moved, the aliens are gonna spawn after every 2 seconds
+  // Sets an interval to spawn aliens every 2 seconds after the spaceship has been moved from its initial position, ensuring aliens start spawning only once.
   if (shipX !== width/2 && !alienSpawnIntervalSet) {
     window.setInterval(spawnAliens, 2000);
     alienSpawnIntervalSet = true;
@@ -116,15 +114,13 @@ function hitAlien() {
   
 }
 
-
-
 function gameResult() {
   // If the lives equal 0, it will end the game and display an image. Stops all the other sounds 
   if (lives <= 0) {
     bulletSound.stop();
     alienDestroyedSound.stop();
     lifeLostSound.stop();
-    background(55);
+    background(0,27,45);
     image(gameLost,width/5,0,1024,height);
   }
 
@@ -133,12 +129,20 @@ function gameResult() {
     bulletSound.stop();
     alienDestroyedSound.stop();
     lifeLostSound.stop();
-    background(55);
+    background(0,27,45);
     image(gameWon,width/3,0,612,365);
-    // gameWonText();
+    gameWonText();
   }
 }
 
+function gameWonText() {
+  // Display the text after the user wins the game
+  fill(255);
+  textStyle(BOLD);
+  textSize(65);
+  textAlign(CENTER, CENTER);
+  text("YOU HAVE SAVED OUR PLANET",width / 2,height / 2);
+}
 
 function keyPressed() {
   // For every time spacebar is pressed, bullets are spawned at the x location of the ship. Letting a sound play as well and adjusting the volume
@@ -172,7 +176,6 @@ function moveShip() {
     shipX = 0;
   }
 }
-
 
 function spawnBullets(bulletX) {
   // Make a bullet and set its attributes
@@ -209,7 +212,7 @@ function spawnAliens() {
   let alien = {
     alienX: random(width*8.5/10),
     alienY: 0, 
-    alienDY: 4,
+    alienDY: 4.5,
     alienW: 60,
     alienH: 60,
   };
@@ -252,13 +255,14 @@ function displayTextOnStartup() {
   fill("green");
   textSize(105);
   textStyle(BOLD);
-  text("SPACE INVADERS", width/2, height/6);
+  text("SPACE INVADERS", width/2, height/5);
 
   // Displaying Instructions 
   fill(255);
   textSize(45);
   textAlign(CENTER, CENTER);
-  text("Click the mouse to start the game",width / 2,height / 2);
+  text("Click to start the game",width / 2,height / 2);
+
   fill(255);
   textSize(30);
   text("Use the Arrow Keys or the keys 'a' and 'd' to move the ship.",width/2,height*3/4);
