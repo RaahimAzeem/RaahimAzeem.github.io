@@ -3,7 +3,7 @@ let state = "game screen";
 let grid, cols, rows;
 let w = 20;
 
-let totalMines = 20;
+let totalMines = 100;
 
 
 class Cell {
@@ -95,7 +95,12 @@ class Cell {
 function preload() {}
 
 function setup() {
-  createCanvas(400, 400);
+  if (windowWidth < windowHeight) {
+    createCanvas(windowWidth, windowWidth);
+  }
+  else {
+    createCanvas(windowHeight, windowHeight);
+  }
   
   cols = Math.floor(width / w);
   rows = Math.floor(height / w);
