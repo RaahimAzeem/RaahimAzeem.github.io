@@ -1,9 +1,26 @@
+// Grid-Based Game (Minesweeper) 
+// Muhammad Raahim 
+// April 30, 2024
+//
+// Extra for Experts:
+// // - Added Frame Rate Per Second ////////////
+// // - Added some HTML, CSS elements //////////
+// // - Added buttons to take user input //////
 
 let state = "game screen";
 let grid, cols, rows;
-let w = 20;
+let w = 30;
 
-let totalMines = 100;
+let totalMines = 50;
+
+let markerImage;
+let mineImage;
+
+function preload() {
+  markerImage = loadImage("Marker Flag.png");
+  mineImage = loadImage("Mine.png");
+}
+
 
 
 class Cell {
@@ -26,34 +43,85 @@ class Cell {
     if (this.revealed) {
 
       if (this.mine) {
-        fill(0);
-        circle(this.x + this.w / 2, this.y + this.w / 2, this.w / 2);
+        image(mineImage,this.x,this.y,this.w,this.w);
       }
 
       else {
-        fill(137);
+        fill(197);
         square(this.x, this.y, this.w);
 
-        if (this.neighbourCount > 0) {
+        if (this.neighbourCount === 1) {
           textAlign(CENTER);
-          fill(0);
-          text(this.neighbourCount, this.x + this.w / 2, this.y + this.w / 2 + 4);
+          textStyle(BOLD);
+          textSize(20);
+          fill("blue");
+          text(this.neighbourCount, this.x + this.w / 2, this.y + this.w / 2 + 5);
 
         }
+        if (this.neighbourCount === 2) {
+          textAlign(CENTER);
+          textStyle(BOLD);
+          textSize(20);
+          fill("green");
+          text(this.neighbourCount, this.x + this.w / 2, this.y + this.w / 2 + 5);
+
+        }
+        if (this.neighbourCount === 3) {
+          textAlign(CENTER);
+          textStyle(BOLD);
+          textSize(20);
+          fill("red");
+          text(this.neighbourCount, this.x + this.w / 2, this.y + this.w / 2 + 5);
+
+        }
+        if (this.neighbourCount === 4) {
+          textAlign(CENTER);
+          textStyle(BOLD);
+          textSize(20);
+          fill(0,0,153);
+          text(this.neighbourCount, this.x + this.w / 2, this.y + this.w / 2 + 5);
+
+        }
+        if (this.neighbourCount === 5) {
+          textAlign(CENTER);
+          textStyle(BOLD);
+          textSize(20);
+          fill(102,0,0);
+          text(this.neighbourCount, this.x + this.w / 2, this.y + this.w / 2 + 5);
+
+        }
+        if (this.neighbourCount === 6) {
+          textAlign(CENTER);
+          textStyle(BOLD);
+          textSize(20);
+          fill(0,255,255);
+          text(this.neighbourCount, this.x + this.w / 2, this.y + this.w / 2 + 5);
+
+        }
+        
       }
     }
+
+    else if (this.marker) {
+      image(markerImage,this.x,this.y,this.w,this.w);
+      // fill(0, 0, 255); // Blue color
+      // square(this.x, this.y, this.w);
+    }
   }
+
   cellContains(x, y) {
     return x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.w;
   }
+
   reveal() {
     this.revealed = true;
     if (this.neighbourCount === 0) {
-      // flood fill
-      this.floodFill();
+      // Blank Neighbours fill
+      this.blankNeigboursFill();
     }
   }
-  floodFill() {
+
+  blankNeigboursFill() {
     for (let yOffset = -1; yOffset <= 1; yOffset++) {
       for (let xOffset = -1; xOffset <= 1; xOffset++) {
         let y = this.i + yOffset;
@@ -68,6 +136,7 @@ class Cell {
     }
 
   }
+
   countMines() {
     if (this.mine) {
       // Irrelevant 
@@ -90,16 +159,20 @@ class Cell {
     }
     this.neighbourCount = total;
   }
+
+  placeMarker() {
+    this.marker = !this.marker;
+  }
+
 }
 
-function preload() {}
 
 function setup() {
   if (windowWidth < windowHeight) {
-    createCanvas(windowWidth, windowWidth);
+    createCanvas(windowWidth - 200, windowWidth - 200);
   }
   else {
-    createCanvas(windowHeight, windowHeight);
+    createCanvas(windowHeight - 200, windowHeight - 200);
   }
   
   cols = Math.floor(width / w);
@@ -126,6 +199,7 @@ function setup() {
     let choice = options[index];  
     let i = choice[0];
     let j = choice[1];
+
     // Deletes the cell to prevent a mine from appearing twice in the same cell
     options.splice(index,1);
 
@@ -138,6 +212,7 @@ function setup() {
       grid[y][x].countMines();
     }
   }
+
   
 }
 
@@ -146,6 +221,7 @@ function draw() {
 }
 
 function determineState() {
+  // Determining the state
   if (state === "start screen") {
     startScreen();
   }
@@ -172,13 +248,25 @@ function gameLostText() {
 }
 
 function mousePressed() {
-  for (let y = 0; y < rows; y++) {
-    for (let x = 0; x < cols; x++) {
-      if (grid[y][x].cellContains(mouseX,mouseY)) {
-        grid[y][x].reveal();
+  if (keyIsPressed && key === "m") { // Check if 'm' key is pressed
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        if (grid[y][x].cellContains(mouseX, mouseY)) {
+          grid[y][x].placeMarker(); // Toggle the marker instead of revealing
+          return; // Exit the function after marking to prevent revealing
+        }
+      }
+    }
+  } 
+  else {
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        if (grid[y][x].cellContains(mouseX, mouseY)) {
+          grid[y][x].reveal();
 
-        if (grid[y][x].mine) {
-          gameLost();
+          if (grid[y][x].mine) {
+            gameLost();
+          }
         }
       }
     }
