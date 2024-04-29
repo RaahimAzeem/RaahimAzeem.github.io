@@ -1,8 +1,21 @@
 html, body {
   margin: 0;
-  padding: 0;
+  padding-left: 16vw;
+  background: lightblue;
+  
 }
 
 canvas {
   display: block;
 }
+
+
+h1 {
+  padding-left: 9vw;
+  padding-right: 9vw;
+  color: black;
+  font-size: 40px;
+  font-family: "Permanent Marker";
+}
+
+

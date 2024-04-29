@@ -3,22 +3,26 @@
 // April 30, 2024
 //
 // Extra for Experts:
-// // - Added Frame Rate Per Second ////////////
-// // - Added some HTML, CSS elements //////////
-// // - Added buttons to take user input //////
+// - Added a few HTML, CSS elements 
+// - Added code to get user input 
+// - Used Classes
 
-let state = "game screen";
+// Have to add COMMENTS, CSS ATTRIBUTES
+
+
+// let state = "game screen";
 let grid, cols, rows;
 let w = 30;
 
-let totalMines = 50;
+let totalMines;
 
 let markerImage;
 let mineImage;
 
+
 function preload() {
-  markerImage = loadImage("Marker Flag.png");
-  mineImage = loadImage("Mine.png");
+  markerImage = loadImage("assets/Marker Flag.png");
+  mineImage = loadImage("assets/Mine.png");
 }
 
 
@@ -104,8 +108,6 @@ class Cell {
 
     else if (this.marker) {
       image(markerImage,this.x,this.y,this.w,this.w);
-      // fill(0, 0, 255); // Blue color
-      // square(this.x, this.y, this.w);
     }
   }
 
@@ -175,6 +177,7 @@ function setup() {
     createCanvas(windowHeight - 200, windowHeight - 200);
   }
   
+  totalMines = window.prompt("Type in the number of Mines.");
   cols = Math.floor(width / w);
   rows = Math.floor(height / w);
   grid = generateGrid(cols, rows);
@@ -197,13 +200,13 @@ function setup() {
   for (let n = 0; n < totalMines; n++) {
     let index = Math.floor(random(options.length));
     let choice = options[index];  
-    let i = choice[0];
-    let j = choice[1];
+    let y = choice[0];
+    let x = choice[1];
 
     // Deletes the cell to prevent a mine from appearing twice in the same cell
     options.splice(index,1);
 
-    grid[i][j].mine = true;
+    grid[y][x].mine = true;
 
   }
 
@@ -215,24 +218,21 @@ function setup() {
 
   
 }
+function windowResized() {
+  //make the canvas the largest square that you can...
+  if (windowWidth < windowHeight) {
+    resizeCanvas(windowWidth, windowWidth);
+  }
+  else {
+    resizeCanvas(windowHeight, windowHeight);
+  }
+}
 
 function draw() {
-  determineState();
+  gameScreen();
 }
 
-function determineState() {
-  // Determining the state
-  if (state === "start screen") {
-    startScreen();
-  }
-  else if (state === "game screen") {
-    gameScreen();
-  }
-}
 
-function startScreen() {
-
-}
 
 function gameLost() {
   for (let y = 0; y < rows; y++) {
@@ -244,7 +244,8 @@ function gameLost() {
 }
 
 function gameLostText() {
-  
+  fill(0,0,155);
+  square(400,400,w*2);
 }
 
 function mousePressed() {
