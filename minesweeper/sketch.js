@@ -1,212 +1,203 @@
-// 2D Grid
-// Dan Schellenberg
-// Apr 9, 2024
 
-// if you are hard-coding a level, I'd use something like this
+let state = "game screen";
+let grid, cols, rows;
+let w = 20;
 
-// let grid = [[1, 0, 0, 1],
-//             [0, 1, 0, 1],
-//             [1, 1, 0, 0],
-//             [1, 0, 1, 1],
-//             [0, 0, 0, 1],
-//             [0, 0, 1, 1],
-//             [0, 1, 0, 1],
-//             [0, 0, 0, 1]];
+let totalMines = 100;
 
-let grid;
-let cellSize;
-const GRID_SIZE = 40;
-let toggleStyle = "self";
-let isAutoPlayOn = false;
-let gosperGun;
 
-function preload() {
-  gosperGun = loadJSON("gosper.json");
+class Cell {
+  constructor(i, j, w) {
+    this.i = i;
+    this.j = j;
+    this.x = i * w;
+    this.y = j * w;
+    this.w = w;
+    this.neighbourCount = 0;
+
+    this.mine = false;
+    this.revealed = false;
+  }
+  show() {
+    stroke(0);
+    noFill();
+    square(this.x, this.y, this.w);
+
+    if (this.revealed) {
+
+      if (this.mine) {
+        fill(0);
+        circle(this.x + this.w / 2, this.y + this.w / 2, this.w / 2);
+      }
+
+      else {
+        fill(137);
+        square(this.x, this.y, this.w);
+
+        if (this.neighbourCount > 0) {
+          textAlign(CENTER);
+          fill(0);
+          text(this.neighbourCount, this.x + this.w / 2, this.y + this.w / 2 + 4);
+
+        }
+      }
+    }
+  }
+  cellContains(x, y) {
+    return x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.w;
+  }
+  reveal() {
+    this.revealed = true;
+    if (this.neighbourCount === 0) {
+      // flood fill
+      this.floodFill();
+    }
+  }
+  floodFill() {
+    for (let yOffset = -1; yOffset <= 1; yOffset++) {
+      for (let xOffset = -1; xOffset <= 1; xOffset++) {
+        let y = this.i + yOffset;
+        let x = this.j + xOffset;
+        if (y > -1 && y < rows && x > -1 && x < cols) {
+          let neighbour = grid[y][x];
+          if (!neighbour.mine && !neighbour.revealed) {
+            neighbour.reveal();
+          }
+        }
+      }
+    }
+
+  }
+  countMines() {
+    if (this.mine) {
+      // Irrelevant 
+      this.neighbourCount = -1;
+      return;
+    }
+
+    let total = 0;
+    for (let yOffset = -1; yOffset <= 1; yOffset++) {
+      for (let xOffset = -1; xOffset <= 1; xOffset++) {
+        let y = this.i + yOffset;
+        let x = this.j + xOffset;
+        if (y > -1 && y < rows && x > -1 && x < cols) {
+          let neighbour = grid[y][x];
+          if (neighbour.mine) {
+            total++;
+          }
+        }
+      }
+    }
+    this.neighbourCount = total;
+  }
 }
 
+function preload() {}
+
 function setup() {
-  //make the canvas the largest square that you can...
   if (windowWidth < windowHeight) {
     createCanvas(windowWidth, windowWidth);
   }
   else {
     createCanvas(windowHeight, windowHeight);
   }
-
-  //if randomizing the grid, do this:
-  grid = generateRandomGrid(GRID_SIZE, GRID_SIZE);
   
-  //this is dumb -- should check if this is the right size!
-  cellSize = height/grid.length;
-}
+  cols = Math.floor(width / w);
+  rows = Math.floor(height / w);
+  grid = generateGrid(cols, rows);
 
-function windowResized() {
-  //make the canvas the largest square that you can...
-  if (windowWidth < windowHeight) {
-    resizeCanvas(windowWidth, windowWidth);
-  }
-  else {
-    resizeCanvas(windowHeight, windowHeight);
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      grid[y][x] = new Cell(y, x, w);
+    }
   }
 
-  cellSize = height/grid.length;
+  // Pick totalMines Spot
+  let options = [];
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      options.push([i,j]);
+    }
+  }
+
+
+  for (let n = 0; n < totalMines; n++) {
+    let index = Math.floor(random(options.length));
+    let choice = options[index];  
+    let i = choice[0];
+    let j = choice[1];
+    // Deletes the cell to prevent a mine from appearing twice in the same cell
+    options.splice(index,1);
+
+    grid[i][j].mine = true;
+
+  }
+
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      grid[y][x].countMines();
+    }
+  }
+  
 }
 
 function draw() {
-  background(220);
-
-  if (isAutoPlayOn && frameCount % 5 === 0) {
-    grid = updateGrid();
-  }
-
-  displayGrid();
+  determineState();
 }
 
-function keyPressed() {
-  if (key === "r") {
-    grid = generateRandomGrid(GRID_SIZE, GRID_SIZE);
+function determineState() {
+  if (state === "start screen") {
+    startScreen();
   }
-
-  if (key === "e") {
-    grid = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
-  }
-
-  if (key === "g") {
-    grid = gosperGun.gun;
-  }
-
-  if (key === "n") {
-    toggleStyle = "neighbours";
-  }
-
-  if (key === "s") {
-    toggleStyle = "self";
-  }
-
-  if (key === " ") {
-    grid = updateGrid();
-  }
-
-  if (key === "a") {
-    isAutoPlayOn = !isAutoPlayOn;
+  else if (state === "game screen") {
+    gameScreen();
   }
 }
 
-function updateGrid() {
-  //need a second array, so I don't mess with the grid while counting neighbours
-  let nextTurn = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
+function startScreen() {
 
-  //look at every cell
-  for (let y = 0; y < GRID_SIZE; y++) {
-    for (let x = 0; x < GRID_SIZE; x++) {
-      let neighbours = 0;
+}
 
-      //look at every cell in a 3x3 grid around the cell
-      for (let i = -1; i <= 1; i++) {
-        for (let j = -1; j <= 1; j++) {
-          //avoid going off the edge of the grid
-          if (x+j >= 0 && x+j < GRID_SIZE && y+i >= 0 && y+i < GRID_SIZE) {
-            neighbours += grid[y + i][x + j];
-          }
-        }
-      }
-
-      //don't count yourself in the neighbours
-      neighbours -= grid[y][x];
-
-
-      //apply the rules
-      if (grid[y][x] === 1) { //currently alive
-        if (neighbours === 2 || neighbours === 3) {
-          nextTurn[y][x] = 1;
-        }
-        else {
-          nextTurn[y][x] = 0;
-        }
-      }
-
-      if (grid[y][x] === 0) { //currently dead
-        if (neighbours === 3) {
-          nextTurn[y][x] = 1;
-        }
-        else {
-          nextTurn[y][x] = 0;
-        }
-      }
+function gameLost() {
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      grid[y][x].revealed = true;
     }
   }
-  return nextTurn;
+  gameLostText();
 }
 
+function gameLostText() {
+  
+}
 
 function mousePressed() {
-  let x = Math.floor(mouseX/cellSize);
-  let y = Math.floor(mouseY/cellSize);
-
-  //toggle self
-  toggleCell(x, y);
-
-  // and NESW neighbours, if style is set to neighbours
-  if (toggleStyle === "neighbours") {
-    toggleCell(x + 1, y);
-    toggleCell(x - 1, y);
-    toggleCell(x, y + 1);
-    toggleCell(x, y - 1);
-  }
-}
-
-function toggleCell(x, y) {
-  // make sure the cell you're toggling is in the grid...
-  if (x < GRID_SIZE && y < GRID_SIZE &&
-      x >= 0 && y >= 0) {
-    //toggle the color of the cell
-    if (grid[y][x] === 0) {
-      grid[y][x] = 1;
-    }
-    else {
-      grid[y][x] = 0;
-    }
-  }
-}
-
-function displayGrid() {
-  for (let y = 0; y < grid.length; y++) {
-    for (let x = 0; x < grid[y].length; x++) {
-      if (grid[y][x] === 1) {
-        fill("black");
-      }
-      else {
-        fill("white");
-      }
-      square(x * cellSize, y * cellSize, cellSize);
-    }
-  }
-}
-
-function generateRandomGrid(cols, rows) {
-  let emptyArray = [];
   for (let y = 0; y < rows; y++) {
-    emptyArray.push([]);
     for (let x = 0; x < cols; x++) {
-      //half the time, be a 1. Other half, be a 0.
-      if (random(100) < 50) {
-        emptyArray[y].push(0);
-      }
-      else {
-        emptyArray[y].push(1);
+      if (grid[y][x].cellContains(mouseX,mouseY)) {
+        grid[y][x].reveal();
+
+        if (grid[y][x].mine) {
+          gameLost();
+        }
       }
     }
   }
-  return emptyArray;
 }
 
-function generateEmptyGrid(cols, rows) {
-  let emptyArray = [];
+function gameScreen() {
+  background(255);
   for (let y = 0; y < rows; y++) {
-    emptyArray.push([]);
     for (let x = 0; x < cols; x++) {
-      emptyArray[y].push(0);
+      grid[y][x].show();
     }
+  }
+}
+
+function generateGrid(cols, rows) {
+  let emptyArray = new Array(rows);
+  for (let i = 0; i < emptyArray.length; i++) {
+    emptyArray[i] = new Array(cols);
   }
   return emptyArray;
 }
