@@ -11,6 +11,7 @@
 - [Bubble Movement](bubble)
 - [2D Grid](grid)
 - [Character in 2D Grid](character-in-grid)
+- [Walker OOP](oop-demo)
 
 ## Projects 
 - [Interactive Scene](interactive_scene)
