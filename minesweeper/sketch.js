@@ -1,31 +1,30 @@
 // Grid-Based Game (Minesweeper) 
 // Muhammad Raahim 
-// April 30, 2024
+// April 29, 2024
 //
 // Extra for Experts:
 // - Added a few HTML, CSS elements 
 // - Added code to get user input 
 // - Used Classes
+// - Used setTimeout function
 
-// Have to add COMMENTS, CSS ATTRIBUTES
+// Have to add COMMENTS, SOUNDS
 
-
-// let state = "game screen";
 let grid, cols, rows;
-let w = 30;
+let w = 40;
 
 let totalMines;
+let level;
 
-let markerImage;
-let mineImage;
-
+let markerImage, mineImage;
+let mineSound, nonMineSound;
 
 function preload() {
   markerImage = loadImage("assets/Marker Flag.png");
   mineImage = loadImage("assets/Mine.png");
+  mineSound = loadSound("assets/minesound.mp3");
+  nonMineSound = loadSound("assets/nonminesound.mp3");
 }
-
-
 
 class Cell {
   constructor(i, j, w) {
@@ -57,7 +56,7 @@ class Cell {
         if (this.neighbourCount === 1) {
           textAlign(CENTER);
           textStyle(BOLD);
-          textSize(20);
+          textSize(w-15);
           fill("blue");
           text(this.neighbourCount, this.x + this.w / 2, this.y + this.w / 2 + 5);
 
@@ -65,7 +64,7 @@ class Cell {
         if (this.neighbourCount === 2) {
           textAlign(CENTER);
           textStyle(BOLD);
-          textSize(20);
+          textSize(w-15);
           fill("green");
           text(this.neighbourCount, this.x + this.w / 2, this.y + this.w / 2 + 5);
 
@@ -73,7 +72,7 @@ class Cell {
         if (this.neighbourCount === 3) {
           textAlign(CENTER);
           textStyle(BOLD);
-          textSize(20);
+          textSize(w-15);
           fill("red");
           text(this.neighbourCount, this.x + this.w / 2, this.y + this.w / 2 + 5);
 
@@ -81,7 +80,7 @@ class Cell {
         if (this.neighbourCount === 4) {
           textAlign(CENTER);
           textStyle(BOLD);
-          textSize(20);
+          textSize(w-15);
           fill(0,0,153);
           text(this.neighbourCount, this.x + this.w / 2, this.y + this.w / 2 + 5);
 
@@ -89,7 +88,7 @@ class Cell {
         if (this.neighbourCount === 5) {
           textAlign(CENTER);
           textStyle(BOLD);
-          textSize(20);
+          textSize(w-15);
           fill(102,0,0);
           text(this.neighbourCount, this.x + this.w / 2, this.y + this.w / 2 + 5);
 
@@ -97,7 +96,7 @@ class Cell {
         if (this.neighbourCount === 6) {
           textAlign(CENTER);
           textStyle(BOLD);
-          textSize(20);
+          textSize(w-15);
           fill(0,255,255);
           text(this.neighbourCount, this.x + this.w / 2, this.y + this.w / 2 + 5);
 
@@ -177,7 +176,19 @@ function setup() {
     createCanvas(windowHeight - 200, windowHeight - 200);
   }
   
-  totalMines = window.prompt("Type in the number of Mines.");
+  
+  level = window.prompt("Type in the type of difficulty to create number of mines accordingly: 1.Easy         2.Medium        3.Hard");
+  if (level === "easy" || level === "Easy" || level === "1" || level === "1") {
+    totalMines = 25;
+  }
+  else if (level === "medium" || level === "Medium" || level === "2" || level === "2") {
+    totalMines = 50;
+  }
+  else if (level === "hard" || level === "Hard" || level === "3" || level === "3") {
+    totalMines = 75;
+  }
+
+
   cols = Math.floor(width / w);
   rows = Math.floor(height / w);
   grid = generateGrid(cols, rows);
@@ -218,21 +229,10 @@ function setup() {
 
   
 }
-function windowResized() {
-  //make the canvas the largest square that you can...
-  if (windowWidth < windowHeight) {
-    resizeCanvas(windowWidth, windowWidth);
-  }
-  else {
-    resizeCanvas(windowHeight, windowHeight);
-  }
-}
 
 function draw() {
   gameScreen();
 }
-
-
 
 function gameLost() {
   for (let y = 0; y < rows; y++) {
@@ -240,12 +240,24 @@ function gameLost() {
       grid[y][x].revealed = true;
     }
   }
-  gameLostText();
+
 }
 
 function gameLostText() {
-  fill(0,0,155);
-  square(400,400,w*2);
+  window.confirm("YOU HAVE LOST THE GAME! To play again, restart the window.");
+}
+
+function gameWin() {
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      let cell = grid[y][x];
+      // Check if the cell is not revealed and is not a mine
+      if (!cell.revealed && !cell.mine) {
+        return false; // Game is not won yet
+      }
+    }
+  }
+  return true; // All non-mine cells are revealed, game is won
 }
 
 function mousePressed() {
@@ -263,15 +275,25 @@ function mousePressed() {
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < cols; x++) {
         if (grid[y][x].cellContains(mouseX, mouseY)) {
-          grid[y][x].reveal();
-
           if (grid[y][x].mine) {
             gameLost();
+            setTimeout(gameLostText,500);
           }
+          else {
+            grid[y][x].reveal();
+            if (gameWin()) { // Check for win condition only after revealing a non-mine cell
+              setTimeout(gameWonText,500);
+            }
+          }
+          
         }
       }
     }
   }
+}
+
+function gameWonText() {
+  window.confirm("YOU HAVE WON THE GAME! To play again, restart the window.");
 }
 
 function gameScreen() {
