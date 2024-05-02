@@ -9,9 +9,9 @@ class Particle {
     this.size = 5;
     this.dx = random(-5,5);
     this.dy = random(-5,5);
-    this.r = 255;
-    this.g = 0;
-    this.b = 0;
+    this.r = random(255);
+    this.g = random(255);
+    this.b = random(255);
     this.opacity = 255;
   }
 
@@ -47,7 +47,7 @@ function draw() {
   for (let firework of theFireworks) {
     if (firework.isDead()) {
       // Delete It
-      let index = theFireworks.indexOf(theFireworks);
+      let index = theFireworks.indexOf(firework);
       theFireworks.splice(index,1);
     }
     else {
