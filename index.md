@@ -12,6 +12,8 @@
 - [2D Grid](grid)
 - [Character in 2D Grid](character-in-grid)
 - [Walker OOP](oop-demo)
+- [Walker OOP With Arrays](oop-with-arrays)
+- [Fireworks](fireworks)
 
 ## Projects 
 - [Interactive Scene](interactive_scene)
