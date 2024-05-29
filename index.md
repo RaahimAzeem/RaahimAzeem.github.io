@@ -16,6 +16,7 @@
 - [Fireworks](fireworks)
 - [Connected Nodes OOP](nodes)
 - [Clickable Button Demo](clickable)
+- [Recursive Circles](recursive-circles)
 
 ## Projects 
 - [Interactive Scene](interactive_scene)
